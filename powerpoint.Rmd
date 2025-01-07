@@ -1,0 +1,31 @@
+---
+title: "Untitled"
+author: "Eleanor Harrison"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+library(sparklyr)
+library(dplyr)
+library(ggplot2)
+library(knitr)
+library(broom)
+library(gt)
+
+sc <-  spark_connect(master = "local")
+#importing csv using command that would work in big data setting
+diabetes_spk <- spark_read_csv(sc, "diabetic_data.csv", overwrite = TRUE)
+
+cached_diabetes_spk <- diabetes_spk %>% 
+  #filter out ">30" days, question asks within 30 days
+  filter(readmitted != ">30")
+
+head(cached_diabetes_spk)
+glimpse(cached_diabetes_spk)
+```
